@@ -28,6 +28,6 @@ function setup() {
 
 function draw() {
   background(truck);
-  text ('press the truck!', 50, 150);
+  text ('press the truck!', 50, 150); 
 }
   
