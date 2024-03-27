@@ -2,9 +2,6 @@ function preload(){
   truck = loadImage ('assets/truckerhorn.png')
 }
 
-
-
-
 let saw = new Tone.Synth({
   oscillator: {
     type: "sawtooth"
@@ -16,7 +13,6 @@ let saw = new Tone.Synth({
     release: 0.01,
   }
 }).toDestination();
-
 
 function mousePressed() { 
 saw.triggerAttackRelease("c3", 1.5);
