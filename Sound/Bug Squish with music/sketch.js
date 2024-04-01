@@ -4,7 +4,9 @@ let walkingAnimation;
 let animations = [];
 let level = .5;
 let scream= new Tone.Player ("assets/scream.wav").toDestination();
-
+let GameOverSound = new Tone.Player ("assets/GameOverSound.mp3").toDestination();
+let squish= new Tone.Player ("assets/squish.wav").toDestination();
+//background music
 const GameState = {
   Start : "Start",
   Playing : "Playing",
@@ -36,6 +38,7 @@ function draw() {
   switch(game.state) {
     case GameState.Playing:
       background(220);
+      //start background music
       for(let i=0; i < animations.length; i++) {
         animations[i].draw();
       }
@@ -46,10 +49,13 @@ function draw() {
       text (ceil(currentTime), 300, 40);
       game.elapsedTime += deltaTime / 1000;
     
-      if (currentTime < 0)
+      if (currentTime < 0){
       //we do this so we dont go into negs and we can game ova
-        game.state = GameState.GameOver;
-    
+      game.state = GameState.GameOver;
+      //stop background music
+      GameOverSound.start();
+
+      }
       break;
     case GameState.GameOver:
       background (0);
@@ -59,6 +65,8 @@ function draw() {
       text ("Game Over!",200,200);
       textSize(20);
       text(("Score: ") +game.score, 200,270);
+
+      
       break;
   }
  
@@ -96,8 +104,12 @@ function mouseReleased() {
     let contains = animations[i].contains(mouseX,mouseY);
     if (contains) {
       if (animations[i].stop);
+        //force end to scream
         scream.stop();
         animations[i].dead();
+        //prob w squish is if its dead it still squish
+        //when game is over they still scream and squish
+        squish.start();
       }
     }
   }
