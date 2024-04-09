@@ -6,6 +6,9 @@ let level = .5;
 let scream= new Tone.Player ("assets/scream.wav").toDestination();
 let GameOverSound = new Tone.Player ("assets/GameOverSound.mp3").toDestination();
 let squish= new Tone.Player ("assets/squish.wav").toDestination();
+let music = new Tone.Player ("assets/BackMusic.mp3").toDestination();
+music.loop = true;
+music.autostart = true;
 //background music
 const GameState = {
   Start : "Start",
@@ -34,11 +37,12 @@ function setup() {
 
 
 function draw() {
+ 
   // moving through diff stages of game, this is when user is playing
   switch(game.state) {
     case GameState.Playing:
       background(220);
-      //start background music
+
       for(let i=0; i < animations.length; i++) {
         animations[i].draw();
       }
@@ -46,18 +50,24 @@ function draw() {
       text (game.score, 20,40);
       let currentTime = game.maxTime- game.elapsedTime;
       //ceil makes it like whole numbers
-      text (ceil(currentTime), 300, 40);
+      text (ceil(currentTime), 350, 40);
       game.elapsedTime += deltaTime / 1000;
-    
+
+      if (currentTime>0){ 
+        game.state= GameState.Playing;
+      }
+
+      if (currentTime > 15){
+        music.playbackRate + 1.25;
+      }
       if (currentTime < 0){
       //we do this so we dont go into negs and we can game ova
       game.state = GameState.GameOver;
-      //stop background music
+      music.stop();
       GameOverSound.start();
-
       }
       break;
-    case GameState.GameOver:
+    case GameState.GameOver: 
       background (0);
       fill(255);
       textAlign(CENTER);
@@ -76,6 +86,7 @@ function draw() {
 
 // stops the guys from moving but only projects the smush sprite
 function mousePressed() {
+  //music.start();
 for (let i=0; i < animations.length; i++) {
     let contains = animations[i].contains(mouseX,mouseY);
     if (contains) {
@@ -136,6 +147,7 @@ class WalkingAnimation {
   }
 
   draw(){
+    
     this.u = (this.moving != 0) ? this.currentFrame % this.animationLength : this.u;
     push();
     translate(this.dx,this.dy);
