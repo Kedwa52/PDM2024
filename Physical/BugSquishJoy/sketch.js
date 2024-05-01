@@ -1,4 +1,4 @@
-//THIS VERSION ADAPTED FOR MUSIC & JOYSTICK COMPATABILITY
+//THIS VERSION ADAPTED FOR MUSIC & controller COMPATABILITY
 let spriteSheet;
 let walkingAnimation;
 let animations = [];
@@ -10,13 +10,11 @@ let music = new Tone.Player ("assets/BackMusic.mp3").toDestination();
 music.loop = true;
 music.autostart = true;
 //joystick variables
-/*
 let port;
 let joyX = 0, joyY = 0, sw = 0;
 let connectButton;
 let circleX, circleY;
 let speed = 3;
-*/
 //background music
 const GameState = {
   Start : "Start",
@@ -33,26 +31,24 @@ function preload() {
 }
 
 function setup() {
-  port = createSerial();
   createCanvas(400, 400);
   imageMode(CENTER);
   angleMode(DEGREES);
+
   // joystick set up
-  /*
+  port = createSerial();
   circleX = width / 2;
   circleY = height / 2;
 
   connectButton = createButton("Connect");
   connectButton.mousePressed(connect);
 
-  let usedPorts = usedSerialPorts();
+ /* let usedPorts = usedSerialPorts();
   if (usedPorts.length > 0) {
     port.open(usedPorts[0], 57600);
   }
   frameRate(80);
 */
-
-//back to og game set up 
   for(let i=0; i < game.totalSprites; i++) {
     //(spriteSheet, sw, sh, dx, dy, animationLength, speed, framerate, offsetX = 0, offsetY = 0)
     animations[i] = new WalkingAnimation(spriteSheet,80,80,random(50,350),random(50,350),4,level,6,random([0,1]));
@@ -61,39 +57,12 @@ function setup() {
 
 
 function draw() {
- /*
-    //this moves joystick
-    let latest = port.readUntil("\n");
-    let values = latest.split(",");
-    if (values.length > 2) {
-      joyX = values[0];
-      joyY = values[1];
-      sw = Number(values[2]);
-  
-      if (joyX > 0) {
-        circleX += speed;
-      } else if (joyX < 0) {
-        circleX -= speed;
-      }
-  
-      if (joyY > 0) {
-        circleY += speed;
-      } else if (joyY < 0) {
-        circleY -= speed;
-      }
-    }
 
-  //i think this is just so we see where joystick is
-  if (sw == 1) {
-    fill("blue");
-  }
-  circle(circleX, circleY, 5);
-*/
   // moving through diff stages of game, this is when user is playing
   switch(game.state) {
     case GameState.Playing:
       background(220);
-
+      //back to og code
       for(let i=0; i < animations.length; i++) {
         animations[i].draw();
       }
@@ -103,6 +72,35 @@ function draw() {
       //ceil makes it like whole numbers
       text (ceil(currentTime), 350, 40);
       game.elapsedTime += deltaTime / 1000;
+      let str = port.readUntil("\n");
+      let values = str.split(",");
+      if (values.length > 2) {
+        joyX = values[0];
+        joyY = values[1];
+        sw = Number(values[2]);
+    
+        if (joyX > 0) {
+          circleX += speed;
+        } else if (joyX < 0) {
+          circleX -= speed;
+        }
+    
+        if (joyY > 0) {
+          circleY += speed;
+        } else if (joyY < 0) {
+          circleY -= speed;
+        }
+      }
+
+    //i think this is just so we see where joystick is
+    if (sw == 1) {
+      fill("blue");
+    }
+    else {
+      fill (255);
+    }
+    circle(circleX, circleY, 20);
+
 
       if (currentTime>0){ 
         game.state= GameState.Playing;
@@ -132,8 +130,9 @@ function draw() {
   }
  
 }
+
 //joystick port connection 
-/*
+
 function connect() {
   if (!port.opened()) {
     port.open('Arduino', 57600);
@@ -141,7 +140,7 @@ function connect() {
     port.close();
   }
 }
-*/
+
 // stops the guys from moving but only projects the smush sprite
 function mousePressed() {
   //music.start();
