@@ -15,6 +15,7 @@ let joyX = 0, joyY = 0, sw = 0;
 let connectButton;
 let circleX, circleY;
 let speed = 3;
+let oldsw=0; 
 //background music
 const GameState = {
   Start : "Start",
@@ -92,11 +93,14 @@ function draw() {
         }
       }
 
-    //i think this is just so we see where joystick is
-    if (sw == 1) {
+    //is my joystick pressed code
+    let  diff= sw-oldsw; 
+    if (diff == 1) {
       fill("blue");
+      joyPressed();
     }
-    else {
+    else if (diff == -1) {
+      joyReleased();
       fill (255);
     }
     circle(circleX, circleY, 20);
@@ -128,7 +132,7 @@ function draw() {
       
       break;
   }
- 
+ oldsw= sw;
 }
 
 //joystick port connection 
@@ -142,10 +146,9 @@ function connect() {
 }
 
 // stops the guys from moving but only projects the smush sprite
-function mousePressed() {
-  //music.start();
+function joyPressed() {
 for (let i=0; i < animations.length; i++) {
-    let contains = animations[i].contains(mouseX,mouseY);
+    let contains = animations[i].contains(circleX,circleY);
     if (contains) {
       //first if statement keeps them from resurrecting!
       if (animations[i].moving ==0){
@@ -153,6 +156,7 @@ for (let i=0; i < animations.length; i++) {
       }
       if (animations[i].moving != 0) {
         scream.start();
+        //light up light 
         animations[i].stop();
         game.score += 1;
         animations[i].speed +1;
@@ -167,14 +171,15 @@ for (let i=0; i < animations.length; i++) {
   }
 }
 //this officially kills my lil guys (prob:comes back to life)
-function mouseReleased() {
+function joyReleased() {
   for (let i=0; i < animations.length; i++) {
-    let contains = animations[i].contains(mouseX,mouseY);
+    let contains = animations[i].contains(circleX,circleY);
     if (contains) {
       if (animations[i].stop);
         //force end to scream
         scream.stop();
         animations[i].dead();
+        //light turns off
         //prob w squish is if its dead it still squish
         //when game is over they still scream and squish
         squish.start();

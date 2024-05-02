@@ -18,7 +18,7 @@ const int interval = 16;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(57000);
   pinMode(SW_PIN, INPUT_PULLUP);
 
   for(int i = 0; i < numReadings; i++) {
