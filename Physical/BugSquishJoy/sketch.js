@@ -16,6 +16,9 @@ let connectButton;
 let circleX, circleY;
 let speed = 3;
 let oldsw=0; 
+
+//led var
+let ledState = 0;
 //background music
 const GameState = {
   Start : "Start",
@@ -98,10 +101,12 @@ function draw() {
     if (diff == 1) {
       fill("blue");
       joyPressed();
+      port.write('9');
     }
     else if (diff == -1) {
       joyReleased();
       fill (255);
+      port.write('8');
     }
     circle(circleX, circleY, 20);
 

@@ -3,8 +3,9 @@
 #define SW_PIN 2
 
 int joyX = 0, joyY = 0, sw = 0;
-
+const int ledPin = 13;    // the number of the LED 
 const int numReadings = 10;
+//int buttonState = 0;
 
 int xReadings[numReadings];  // the readings from the analog input
 int yReadings[numReadings];
@@ -20,7 +21,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(57000);
   pinMode(SW_PIN, INPUT_PULLUP);
-
+  pinMode(ledPin, OUTPUT);
   for(int i = 0; i < numReadings; i++) {
     xReadings[i] = 0;
     yReadings[i] = 0;
@@ -33,6 +34,14 @@ void loop() {
   int y = analogRead(VRY_PIN);
   int sw = digitalRead(SW_PIN);
 
+ while (Serial.available() > 0) {
+  if (Serial.read() == '9') {
+  digitalWrite(ledPin, HIGH);
+  delay(500);
+  digitalWrite(ledPin,LOW);} // Turn LED on
+ //else if (Serial.read() == '8'){
+  //digitalWrite(ledPin, LOW); // Turn LED off
+    }
   xTotal = xTotal - xReadings[readIndex];
   yTotal = yTotal - yReadings[readIndex];
   // read from the sensor:
